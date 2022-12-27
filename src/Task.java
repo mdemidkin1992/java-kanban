@@ -12,8 +12,6 @@ public class Task {
         this.status = status;
     }
 
-    // Setters & Getters
-
     public void setId(Integer id) {
         this.id = id;
     }
