@@ -3,13 +3,15 @@ package managers;
 import managers.tasks.*;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TaskManager {
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    int taskCounter = 1;
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, Subtask> subtasks = new HashMap<>();
+    private int taskCounter = 1;
 
     public Task addTask(Task task) {
         task.setId(taskCounter++);
@@ -31,15 +33,15 @@ public class TaskManager {
         return subtask;
     }
 
-    public HashMap<Integer, Task> getAllTasks() {
+    public Map<Integer, Task> getAllTasks() {
         return tasks;
     }
 
-    public HashMap<Integer, Subtask> getAllSubtasks() {
+    public Map<Integer, Subtask> getAllSubtasks() {
         return subtasks;
     }
 
-    public HashMap<Integer, Epic> getAllEpics() {
+    public Map<Integer, Epic> getAllEpics() {
         return epics;
     }
 
@@ -77,9 +79,9 @@ public class TaskManager {
         return epics.get(epicId);
     }
 
-    public ArrayList<Subtask> getSubtasksFromEpic(Integer epicId) {
-        ArrayList<Integer> subtaskIds = epics.get(epicId).getSubtaskIds();
-        ArrayList<Subtask> epicSubtasks = new ArrayList<>();
+    public List<Subtask> getSubtasksFromEpic(Integer epicId) {
+        List<Integer> subtaskIds = epics.get(epicId).getSubtaskIds();
+        List<Subtask> epicSubtasks = new ArrayList<>();
         for (Integer id : subtaskIds) {
             if (subtasks.containsKey(id)) {
                 epicSubtasks.add(subtasks.get(id));
@@ -119,7 +121,7 @@ public class TaskManager {
     private void syncEpicStatus(Integer epicId) {
         int countNew = 0;
         int countDone = 0;
-        ArrayList<Integer> subtaskIds = epics.get(epicId).getSubtaskIds();
+        List<Integer> subtaskIds = epics.get(epicId).getSubtaskIds();
 
         if (epics.get(epicId).getSubtaskIds() == null) {
             epics.get(epicId).setStatus("NEW");
