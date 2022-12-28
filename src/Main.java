@@ -1,3 +1,6 @@
+import managers.TaskManager;
+import managers.tasks.*;
+
 public class Main {
 
     public static void main(String[] args) {

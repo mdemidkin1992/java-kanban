@@ -1,10 +1,14 @@
+package managers;
+
+import managers.tasks.*;
+
 import java.util.HashMap;
 import java.util.ArrayList;
 
 public class TaskManager {
-    HashMap<Integer, Task> tasks = new HashMap<>();
-    HashMap<Integer, Epic> epics = new HashMap<>();
-    HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     int taskCounter = 1;
 
     public Task addTask(Task task) {

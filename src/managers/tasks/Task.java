@@ -1,3 +1,5 @@
+package managers.tasks;
+
 import java.util.Objects;
 
 public class Task {
@@ -6,7 +8,7 @@ public class Task {
     protected int id;
     protected String status;
 
-    public Task (String name, String description, String status) {
+    public Task(String name, String description, String status) {
         this.name = name;
         this.description = description;
         this.status = status;
