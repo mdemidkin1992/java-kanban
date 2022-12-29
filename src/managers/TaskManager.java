@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskManager {
+    // Новая ветка 
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
