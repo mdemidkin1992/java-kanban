@@ -9,8 +9,7 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    HistoryManager historyManager = Managers.getDefaultHistory();
-
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();

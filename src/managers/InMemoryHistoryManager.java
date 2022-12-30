@@ -2,20 +2,18 @@ package managers;
 
 import managers.tasks.Task;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final List<Task> taskHistory = new ArrayList<>();
-    private final int viewsCountLimit = 10;
+    private final List<Task> taskHistory = new LinkedList<>();
 
     @Override
     public void add(Task task) {
-        if (taskHistory.size() < viewsCountLimit) {
-            taskHistory.add(task);
-        } else {
+        final int taskHistoryLimit = 10;
+        taskHistory.add(task);
+        if (taskHistory.size() > taskHistoryLimit) {
             taskHistory.remove(0);
-            taskHistory.add(task);
         }
     }
 
