@@ -44,6 +44,5 @@ public class Main {
         System.out.println("\nУдаляем эпик с подзадачами -> выводим историю");
         taskManager.deleteAnyTask(3);
         System.out.println(taskManager.getHistory());
-
     }
 }
