@@ -1,9 +1,12 @@
 import managers.*;
+import managers.enums.TaskStatus;
 import managers.tasks.*;
+
+import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         TaskManager taskManager = Managers.getDefault();
 
         taskManager.addTask(new Task("Задача 1", "Задача 1", TaskStatus.NEW));
@@ -12,7 +15,7 @@ public class Main {
         taskManager.addSubtask(new Subtask("Подзадача 1", "Подзадача 1", TaskStatus.NEW, 3));
         taskManager.addSubtask(new Subtask("Подзадача 2", "Подзадача 2", TaskStatus.IN_PROGRESS, 3));
         taskManager.addSubtask(new Subtask("Подзадача 3", "Подзадача 3", TaskStatus.DONE, 3));
-        taskManager.addEpic(new Epic("Эпик 2", "Эпик 1", TaskStatus.IN_PROGRESS));
+        taskManager.addEpic(new Epic("Эпик 2", "Эпик 2", TaskStatus.IN_PROGRESS));
 
         System.out.println("\nСписки всех задач");
         System.out.println(taskManager.getAllTasks().values());

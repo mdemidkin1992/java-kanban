@@ -1,4 +1,4 @@
-package managers.tasks;
+package managers.enums;
 
 public enum TaskStatus {
     NEW,

@@ -1,5 +1,7 @@
 package managers.tasks;
 
+import managers.enums.TaskStatus;
+
 public class Subtask extends Task {
     private int epicId;
 
@@ -14,12 +16,11 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "\nSubtask{" +
-                "epicId=" + epicId +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status='" + status + '\'' +
-                "}";
+        return "\n" + id + ","
+                + taskType + ","
+                + name + ","
+                + status + ","
+                + description + ","
+                + epicId;
     }
 }

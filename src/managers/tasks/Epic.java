@@ -1,5 +1,7 @@
 package managers.tasks;
 
+import managers.enums.TaskStatus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,14 +24,4 @@ public class Epic extends Task {
         return subtaskIds;
     }
 
-    @Override
-    public String toString() {
-        return "\nEpic{" +
-                "subtaskIds=" + subtaskIds +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status='" + status + '\'' +
-                '}';
-    }
 }
