@@ -1,4 +1,9 @@
-package managers;
+package managers.utilities;
+
+import managers.historymanagers.HistoryManager;
+import managers.historymanagers.InMemoryHistoryManager;
+import managers.taskmanagers.InMemoryTaskManager;
+import managers.taskmanagers.TaskManager;
 
 public class Managers {
 
