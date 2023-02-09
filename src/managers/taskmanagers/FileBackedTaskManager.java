@@ -13,14 +13,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
 
     public FileBackedTaskManager(File file) {
         this.file = file;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         File file = new File("taskManagerFile.csv");
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
         fileBackedTaskManager.loadFromFile(file);
@@ -31,7 +31,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         fileBackedTaskManager.printHistory();
     }
 
-    private void save() throws ManagerSaveException {
+    private void save() {
         try (PrintWriter printWriter = new PrintWriter(new FileWriter(file.getName()))) {
             printWriter.print("id,type,name,status,description,epic");
             for (Task task : tasks.values()) {
@@ -103,11 +103,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
     }
 
-    private List<String> readFile(File file) throws IOException {
-        return Files.readAllLines(Path.of(file.toPath().toUri()));
+    private List<String> readFile(File file) {
+        try {
+            return Files.readAllLines(Path.of(file.toPath().toUri()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void loadFromFile(File file) throws IOException {
+    private void loadFromFile(File file) {
         loadTasksFromFile(readFile(file));
         loadHistoryFromFile(readFile(file));
     }
