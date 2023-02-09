@@ -23,17 +23,17 @@ public interface TaskManager {
 
     void deleteAllTasks() throws ManagerSaveException;
 
-    Task updateTask(Integer taskId, Task updatedTask) throws ManagerSaveException;
+    Task updateTask(int taskId, Task updatedTask) throws ManagerSaveException;
 
-    Subtask updateSubtask(Integer subtaskId, Subtask updatedSubtask) throws ManagerSaveException;
+    Subtask updateSubtask(int subtaskId, Subtask updatedSubtask) throws ManagerSaveException;
 
-    Epic updateEpic(Integer epicId, Epic updatedEpic) throws ManagerSaveException;
+    Epic updateEpic(int epicId, Epic updatedEpic) throws ManagerSaveException;
 
-    List<Subtask> getSubtasksFromEpic(Integer epicId) throws ManagerSaveException;
+    List<Subtask> getSubtasksFromEpic(int epicId) throws ManagerSaveException;
 
-    void deleteAnyTask(Integer anyTaskId) throws ManagerSaveException;
+    void deleteAnyTask(int anyTaskId) throws ManagerSaveException;
 
-    Object getAnyTask(Integer anyTaskId) throws IOException;
+    Task getAnyTask(int anyTaskId) throws IOException;
 
     List<Task> getHistory() throws IOException;
 

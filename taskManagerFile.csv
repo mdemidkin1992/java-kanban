@@ -8,4 +8,4 @@ id,type,name,status,description,epic
 4,EPIC,Эпик 1,IN_PROGRESS,Эпик 1
 8,EPIC,Эпик 2,IN_PROGRESS,Эпик 2
 
-2,3,8,4
+2,3,8,4,5

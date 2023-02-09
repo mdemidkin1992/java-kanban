@@ -22,16 +22,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     public static void main(String[] args) throws IOException {
         File file = new File("taskManagerFile.csv");
-        FileBackedTaskManager fileBackedTaskManager = loadFromFile(file);
-        System.out.println(tasks.values());
-        System.out.println(subtasks.values());
-        System.out.println(epics.values());
-        System.out.println(historyManager.getHistory());
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
+        fileBackedTaskManager.loadFromFile(file);
+
+        fileBackedTaskManager.printTasks();
+        fileBackedTaskManager.printSubtasks();
+        fileBackedTaskManager.printEpics();
+        fileBackedTaskManager.printHistory();
     }
 
     private void save() throws ManagerSaveException {
-        try (FileWriter fileWriter = new FileWriter(file.getName());
-             PrintWriter printWriter = new PrintWriter(fileWriter)) {
+        try (PrintWriter printWriter = new PrintWriter(new FileWriter(file.getName()))) {
             printWriter.print("id,type,name,status,description,epic");
             for (Task task : tasks.values()) {
                 printWriter.print(task.toString());
@@ -49,7 +50,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
     }
 
-    private static String historyToString(HistoryManager manager) {
+    private String historyToString(HistoryManager manager) {
         StringBuilder historyLine = new StringBuilder();
         List<Task> history = manager.getHistory();
         for (int i = 0; i < history.size(); i++) {
@@ -62,7 +63,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         return historyLine.toString();
     }
 
-    private static List<Integer> historyFromString(String value) {
+    private List<Integer> historyFromString(String value) {
         String[] taskIds = value.split(",");
         List<Integer> result = new ArrayList<>();
         for (String taskId : taskIds) {
@@ -71,7 +72,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         return result;
     }
 
-    private static void loadTasksFromFile(List<String> lines) {
+    private void loadTasksFromFile(List<String> lines) {
         int breakLine = 0;
         if (!lines.isEmpty()) {
             for (int i = 0; i < lines.size(); i++) {
@@ -85,7 +86,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
     }
 
-    private static void loadHistoryFromFile(List<String> lines) {
+    private void loadHistoryFromFile(List<String> lines) {
         if (!lines.get(lines.size() - 1).isEmpty()) {
             List<Integer> taskIds = historyFromString(lines.get(lines.size() - 1));
             for (Integer taskId : taskIds) {
@@ -102,18 +103,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
     }
 
-    private static List<String> readFile(File file) throws IOException {
+    private List<String> readFile(File file) throws IOException {
         return Files.readAllLines(Path.of(file.toPath().toUri()));
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) throws IOException {
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        fileBackedTaskManager.loadTasksFromFile(readFile(file));
-        fileBackedTaskManager.loadHistoryFromFile(readFile(file));
-        return fileBackedTaskManager;
+    private void loadFromFile(File file) throws IOException {
+        loadTasksFromFile(readFile(file));
+        loadHistoryFromFile(readFile(file));
     }
 
-    private static void fromString(String value) {
+    private void fromString(String value) {
         String[] parts = value.split(",");
         TaskType taskType = TaskType.valueOf(parts[1]);
         switch (taskType) {
@@ -142,7 +141,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     @Override
-    public Task addTask(Task task) throws IOException {
+    public Task addTask(Task task) {
         super.addTask(task);
         save();
         return task;
@@ -150,63 +149,94 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
 
     @Override
-    public Epic addEpic(Epic epic) throws IOException {
+    public Epic addEpic(Epic epic) {
         super.addEpic(epic);
         save();
         return epic;
     }
 
     @Override
-    public Subtask addSubtask(Subtask subtask) throws IOException {
+    public Subtask addSubtask(Subtask subtask) {
         super.addSubtask(subtask);
         save();
         return subtask;
     }
 
     @Override
-    public void deleteAllTasks() throws ManagerSaveException {
+    public void deleteAllTasks() {
         super.deleteAllTasks();
         save();
     }
 
     @Override
-    public Task updateTask(Integer taskId, Task updatedTask) throws ManagerSaveException {
+    public Task updateTask(int taskId, Task updatedTask) {
         super.updateTask(taskId, updatedTask);
         save();
         return updatedTask;
     }
 
     @Override
-    public Subtask updateSubtask(Integer subtaskId, Subtask updatedSubtask) throws ManagerSaveException {
+    public Subtask updateSubtask(int subtaskId, Subtask updatedSubtask) {
         super.updateSubtask(subtaskId, updatedSubtask);
         save();
         return updatedSubtask;
     }
 
     @Override
-    public Epic updateEpic(Integer epicId, Epic updatedEpic) throws ManagerSaveException {
+    public Epic updateEpic(int epicId, Epic updatedEpic) {
         super.updateEpic(epicId, updatedEpic);
         save();
         return updatedEpic;
     }
 
     @Override
-    public List<Subtask> getSubtasksFromEpic(Integer epicId) throws ManagerSaveException {
+    public List<Subtask> getSubtasksFromEpic(int epicId) {
         List<Subtask> subtasksFromEpic = super.getSubtasksFromEpic(epicId);
         save();
         return subtasksFromEpic;
     }
 
     @Override
-    public void deleteAnyTask(Integer anyTaskId) throws ManagerSaveException {
+    public void deleteAnyTask(int anyTaskId) {
         super.deleteAnyTask(anyTaskId);
         save();
     }
 
     @Override
-    public Object getAnyTask(Integer anyTaskId) throws IOException {
+    public Task getAnyTask(int anyTaskId) {
         super.getAnyTask(anyTaskId);
         save();
         return tasks.get(anyTaskId);
+    }
+
+    public void printTasks() {
+        Map<Integer, Task> map = super.getAllTasks();
+        for (Map.Entry<Integer, Task> entry : map.entrySet()) {
+            System.out.print(entry.getValue());
+        }
+        System.out.println();
+    }
+
+    public void printSubtasks() {
+        Map<Integer, Subtask> map = super.getAllSubtasks();
+        for (Map.Entry<Integer, Subtask> entry : map.entrySet()) {
+            System.out.print(entry.getValue());
+        }
+        System.out.println();
+    }
+
+    public void printEpics() {
+        Map<Integer, Epic> map = super.getAllEpics();
+        for (Map.Entry<Integer, Epic> entry : map.entrySet()) {
+            System.out.print(entry.getValue());
+        }
+        System.out.println();
+    }
+
+    public void printHistory() {
+        List<Task> list = super.getHistory();
+        for (Task task : list) {
+            System.out.print(task);
+        }
     }
 }
