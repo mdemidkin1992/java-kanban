@@ -2,6 +2,8 @@ package managers.tasks;
 
 import managers.enums.TaskStatus;
 
+import java.time.format.DateTimeFormatter;
+
 public class Subtask extends Task {
     private int epicId;
 
@@ -21,6 +23,8 @@ public class Subtask extends Task {
                 + name + ","
                 + status + ","
                 + description + ","
-                + epicId;
+                + epicId + ","
+                + durationMinutes + " минут,"
+                + startTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy | HH:mm"));
     }
 }

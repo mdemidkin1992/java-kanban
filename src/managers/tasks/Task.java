@@ -3,32 +3,51 @@ package managers.tasks;
 import managers.enums.TaskStatus;
 import managers.enums.TaskType;
 
-import java.io.Serializable;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.Random;
 
-public class Task implements Serializable {
+public class Task {
     protected String name;
     protected String description;
     protected int id;
     protected TaskStatus status;
     protected TaskType taskType;
+    protected int durationMinutes;
+    protected LocalDateTime startTime;
+
+    private static final Random rnd = new Random();
 
     public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
+        this.durationMinutes = 30;
+        this.startTime = LocalDateTime.of(2023                             // задачи на февраль 2023
+                , Month.FEBRUARY                                           // задачи на февраль 2023
+                , rnd.nextInt(27 - 20) + 20
+                , rnd.nextInt(18 - 9) + 9                           // задачи в рабочее время
+                , 0
+                , 0);
     }
 
     public void setId(Integer id) {
         this.id = id;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public void setTaskType(TaskType taskType) {
         this.taskType = taskType;
     }
 
-    public Integer getId() {
-        return id;
+    public TaskType getTaskType() {
+        return this.taskType;
     }
 
     public void setStatus(TaskStatus status) {
@@ -36,7 +55,27 @@ public class Task implements Serializable {
     }
 
     public TaskStatus getStatus() {
-        return status;
+        return this.status;
+    }
+
+    public void setDurationMinutes(int durationMinutes) {
+        this.durationMinutes = durationMinutes;
+    }
+
+    public int getDurationMinutes() {
+        return this.durationMinutes;
+    }
+
+    public LocalDateTime getStartTime() {
+        return this.startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return this.startTime.plus(Duration.ofMinutes(this.durationMinutes));
     }
 
     @Override
@@ -45,7 +84,9 @@ public class Task implements Serializable {
                 + taskType + ","
                 + name + ","
                 + status + ","
-                + description;
+                + description + ","
+                + durationMinutes + " минут,"
+                + startTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy | HH:mm"));
     }
 
     @Override

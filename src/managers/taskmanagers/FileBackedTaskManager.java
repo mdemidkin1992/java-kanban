@@ -20,20 +20,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    public static void main(String[] args) {
-        File file = new File("taskManagerFile.csv");
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        fileBackedTaskManager.loadFromFile(file);
-
-        fileBackedTaskManager.printTasks();
-        fileBackedTaskManager.printSubtasks();
-        fileBackedTaskManager.printEpics();
-        fileBackedTaskManager.printHistory();
-    }
-
     private void save() {
         try (PrintWriter printWriter = new PrintWriter(new FileWriter(file.getName()))) {
-            printWriter.print("id,type,name,status,description,epic");
+            printWriter.print("id,type,name,status,description,epic,duration,startTime");
             for (Task task : tasks.values()) {
                 printWriter.print(task.toString());
             }
@@ -87,17 +76,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private void loadHistoryFromFile(List<String> lines) {
-        if (!lines.get(lines.size() - 1).isEmpty()) {
-            List<Integer> taskIds = historyFromString(lines.get(lines.size() - 1));
-            for (Integer taskId : taskIds) {
-                if (tasks.containsKey(taskId)) {
-                    historyManager.add(tasks.get(taskId));
-                } else if (subtasks.containsKey(taskId)) {
-                    historyManager.add(subtasks.get(taskId));
-                } else if (epics.containsKey(taskId)) {
-                    historyManager.add(epics.get(taskId));
-                } else {
-                    System.out.println("Ошибка");
+        if (!lines.isEmpty()) {
+            if (!lines.get(lines.size() - 1).isEmpty()) {
+                List<Integer> taskIds = historyFromString(lines.get(lines.size() - 1));
+                for (Integer taskId : taskIds) {
+                    if (tasks.containsKey(taskId)) {
+                        historyManager.add(tasks.get(taskId));
+                    } else if (subtasks.containsKey(taskId)) {
+                        historyManager.add(subtasks.get(taskId));
+                    } else if (epics.containsKey(taskId)) {
+                        historyManager.add(epics.get(taskId));
+                    }
                 }
             }
         }
@@ -107,11 +96,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             return Files.readAllLines(Path.of(file.toPath().toUri()));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Файл не найден " + e.getMessage());
         }
+        return Collections.emptyList();
     }
 
-    private void loadFromFile(File file) {
+    protected void loadFromFile(File file) {
         loadTasksFromFile(readFile(file));
         loadHistoryFromFile(readFile(file));
     }
@@ -167,6 +157,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
+    public Map<Integer, Task> getAllTasks() {
+        super.getAllTasks();
+        save();
+        return tasks;
+    }
+
+    @Override
+    public Map<Integer, Subtask> getAllSubtasks() {
+        super.getAllSubtasks();
+        save();
+        return subtasks;
+    }
+
+    @Override
+    public Map<Integer, Epic> getAllEpics() {
+        super.getAllEpics();
+        save();
+        return epics;
+    }
+
+    @Override
     public void deleteAllTasks() {
         super.deleteAllTasks();
         save();
@@ -208,39 +219,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Task getAnyTask(int anyTaskId) {
-        super.getAnyTask(anyTaskId);
+        Task task = super.getAnyTask(anyTaskId);
         save();
-        return tasks.get(anyTaskId);
-    }
-
-    public void printTasks() {
-        Map<Integer, Task> map = super.getAllTasks();
-        for (Map.Entry<Integer, Task> entry : map.entrySet()) {
-            System.out.print(entry.getValue());
-        }
-        System.out.println();
-    }
-
-    public void printSubtasks() {
-        Map<Integer, Subtask> map = super.getAllSubtasks();
-        for (Map.Entry<Integer, Subtask> entry : map.entrySet()) {
-            System.out.print(entry.getValue());
-        }
-        System.out.println();
-    }
-
-    public void printEpics() {
-        Map<Integer, Epic> map = super.getAllEpics();
-        for (Map.Entry<Integer, Epic> entry : map.entrySet()) {
-            System.out.print(entry.getValue());
-        }
-        System.out.println();
-    }
-
-    public void printHistory() {
-        List<Task> list = super.getHistory();
-        for (Task task : list) {
-            System.out.print(task);
-        }
+        return task;
     }
 }

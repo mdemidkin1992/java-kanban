@@ -1,40 +1,41 @@
 package managers.taskmanagers;
 
-import managers.exceptions.ManagerSaveException;
 import managers.tasks.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface TaskManager {
 
-    Task addTask(Task task) throws IOException;
+    Task addTask(Task task);
 
-    Epic addEpic(Epic epic) throws IOException;
+    Epic addEpic(Epic epic);
 
-    Subtask addSubtask(Subtask subtask) throws IOException;
+    Subtask addSubtask(Subtask subtask);
 
-    Map<Integer, Task> getAllTasks() throws ManagerSaveException;
+    Map<Integer, Task> getAllTasks();
 
-    Map<Integer, Subtask> getAllSubtasks() throws ManagerSaveException;
+    Map<Integer, Subtask> getAllSubtasks();
 
-    Map<Integer, Epic> getAllEpics() throws ManagerSaveException;
+    Map<Integer, Epic> getAllEpics();
 
-    void deleteAllTasks() throws ManagerSaveException;
+    void deleteAllTasks();
 
-    Task updateTask(int taskId, Task updatedTask) throws ManagerSaveException;
+    Task updateTask(int taskId, Task updatedTask);
 
-    Subtask updateSubtask(int subtaskId, Subtask updatedSubtask) throws ManagerSaveException;
+    Subtask updateSubtask(int subtaskId, Subtask updatedSubtask);
 
-    Epic updateEpic(int epicId, Epic updatedEpic) throws ManagerSaveException;
+    Epic updateEpic(int epicId, Epic updatedEpic);
 
-    List<Subtask> getSubtasksFromEpic(int epicId) throws ManagerSaveException;
+    List<Subtask> getSubtasksFromEpic(int epicId);
 
-    void deleteAnyTask(int anyTaskId) throws ManagerSaveException;
+    void deleteAnyTask(int anyTaskId);
 
-    Task getAnyTask(int anyTaskId) throws IOException;
+    Task getAnyTask(int anyTaskId);
 
-    List<Task> getHistory() throws IOException;
+    List<Task> getHistory();
+
+    Set<Task> getPrioritizedTasks();
 
 }
