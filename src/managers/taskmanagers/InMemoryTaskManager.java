@@ -2,17 +2,18 @@ package managers.taskmanagers;
 
 import managers.enums.TaskStatus;
 import managers.enums.TaskType;
+import managers.exceptions.AddTaskException;
 import managers.historymanagers.HistoryManager;
 import managers.tasks.*;
 import managers.utilities.Managers;
 
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
+    protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime
+            , Comparator.nullsLast(Comparator.naturalOrder())));
 
-    protected static Map<LocalDateTime, Boolean> intervalMap = generateIntervalMap();
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
     protected final Map<Integer, Task> tasks = new HashMap<>();
     protected final Map<Integer, Epic> epics = new HashMap<>();
@@ -24,7 +25,7 @@ public class InMemoryTaskManager implements TaskManager {
         task.setId(taskCounter++);
         task.setTaskType(TaskType.TASK);
         tasks.put(task.getId(), task);
-        updateIntervalMap(task);
+        validateStartTime(task);
         return task;
     }
 
@@ -42,8 +43,8 @@ public class InMemoryTaskManager implements TaskManager {
         subtask.setTaskType(TaskType.SUBTASK);
         epics.get(subtask.getEpicId()).addSubtaskId(subtask.getId());
         subtasks.put(subtask.getId(), subtask);
-        updateIntervalMap(subtask);
         syncEpic(subtask.getEpicId());
+        validateStartTime(subtask);
         return subtask;
     }
 
@@ -64,7 +65,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllTasks() {
-        clearIntervalValueMap();
         tasks.clear();
         subtasks.clear();
         epics.clear();
@@ -78,6 +78,7 @@ public class InMemoryTaskManager implements TaskManager {
             updatedTask.setStartTime(tasks.get(taskId).getStartTime());
             updatedTask.setDurationMinutes(tasks.get(taskId).getDurationMinutes());
             tasks.put(updatedTask.getId(), updatedTask);
+            validateStartTime(updatedTask);
         }
         return tasks.get(taskId);
     }
@@ -93,6 +94,7 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(subtasks.get(subtaskId).getEpicId()).removeSubtaskId(subtaskId);
             epics.get(subtasks.get(subtaskId).getEpicId()).addSubtaskId(subtaskId);
             syncEpic(updatedSubtask.getEpicId());
+            validateStartTime(updatedSubtask);
         }
         return subtasks.get(subtaskId);
     }
@@ -125,7 +127,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAnyTask(int anyTaskId) {
         historyManager.remove(anyTaskId);
         if (tasks.containsKey(anyTaskId)) {
-            removeTaskFromIntervalMap(tasks.get(anyTaskId));
             tasks.remove(anyTaskId);
         } else if (subtasks.containsKey(anyTaskId)) {
             epics.get(subtasks.get(anyTaskId).getEpicId()).removeSubtaskId(anyTaskId);
@@ -134,11 +135,6 @@ public class InMemoryTaskManager implements TaskManager {
                 syncEpic(subtasks.get(anyTaskId).getEpicId());
             }
 
-
-            // syncEpic(subtasks.get(anyTaskId).getEpicId());
-
-
-            removeTaskFromIntervalMap(subtasks.get(anyTaskId));
             subtasks.remove(anyTaskId);
         } else if (epics.containsKey(anyTaskId)) {
             List<Integer> subtaskIds = epics.get(anyTaskId).getSubtaskIds();
@@ -208,98 +204,73 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+
     private void syncEpicDuration(int epicId) {
         List<Integer> subtaskIds = epics.get(epicId).getSubtaskIds();
-        int epicDuration = 0;
+        List<Integer> subtasksDurationMinutes = new ArrayList<>();
 
-        if (subtaskIds != null) {
-            for (Integer subtaskId : subtaskIds) {
-                epicDuration += subtasks.get(subtaskId).getDurationMinutes();
-            }
+        for (Integer subtaskId : subtaskIds) {
+            subtasksDurationMinutes.add(subtasks.get(subtaskId).getDurationMinutes());
         }
 
-        epics.get(epicId).setDurationMinutes(epicDuration);
+        epics.get(epicId).setDurationMinutes(subtasksDurationMinutes);
     }
 
     private void syncEpicStartTime(int epicId) {
         List<Integer> subtaskIds = epics.get(epicId).getSubtaskIds();
-        List<LocalDateTime> listOfStartTimes = new ArrayList<>();
+        List<LocalDateTime> subtasksStartTimes = new ArrayList<>();
 
         for (Integer subtaskId : subtaskIds) {
-            listOfStartTimes.add(subtasks.get(subtaskId).getStartTime());
+            subtasksStartTimes.add(subtasks.get(subtaskId).getStartTime());
         }
 
-        final LocalDateTime minStartTime = listOfStartTimes.stream()
-                .min(LocalDateTime::compareTo)
-                .orElse(null);
-
-        epics.get(epicId).setStartTime(minStartTime);
+        epics.get(epicId).setStartTime(subtasksStartTimes);
     }
 
     private void syncEpicEndTime(int epicId) {
         List<Integer> subtaskIds = epics.get(epicId).getSubtaskIds();
-        List<LocalDateTime> listOfEndTimes = new ArrayList<>();
+        List<LocalDateTime> subtasksEndTimes = new ArrayList<>();
 
         for (Integer subtaskId : subtaskIds) {
-            listOfEndTimes.add(subtasks.get(subtaskId).getEndTime());
+            subtasksEndTimes.add(subtasks.get(subtaskId).getEndTime());
         }
 
-        final LocalDateTime maxEndTime = listOfEndTimes.stream()
-                .max(LocalDateTime::compareTo)
-                .orElse(null);
-
-        epics.get(epicId).setEpicEndTime(maxEndTime);
+        epics.get(epicId).setEndTime(subtasksEndTimes);
     }
 
     @Override
-    public Set<Task> getPrioritizedTasks() {
-        Set<Task> sortedTasks = new TreeSet<>((task1, task2) -> {
-            if (task1.getStartTime().isAfter(task2.getStartTime())) return 1;
-            else if (task1.getStartTime().isBefore(task2.getStartTime())) return -1;
-            else return 0;
-        });
+    public List<Task> getPrioritizedTasks() {
+        List<Task> prioritizedTasksWithNullStartDateElements = new LinkedList<>();
+        prioritizedTasksWithNullStartDateElements.addAll(prioritizedTasks);
 
-        sortedTasks.addAll(tasks.values());
-        sortedTasks.addAll(subtasks.values());
-        return sortedTasks;
-    }
-
-    private static Map<LocalDateTime, Boolean> generateIntervalMap() {
-        Map<LocalDateTime, Boolean> intervalMap = new LinkedHashMap<>();
-        final LocalDateTime startDateTime = LocalDateTime.of(2023, Month.FEBRUARY, 20, 9, 0);
-        final LocalDateTime endDateTime = LocalDateTime.of(2023, Month.FEBRUARY, 28, 18, 0);
-
-        LocalDateTime beginOfPeriod = startDateTime;
-        while (!beginOfPeriod.isEqual(endDateTime)) {
-            intervalMap.put(beginOfPeriod, true);
-            beginOfPeriod = beginOfPeriod.plusMinutes(30);
-        }
-
-        return intervalMap;
-    }
-
-    private void updateIntervalMap(Task task) {
-        if (intervalMap.get(task.getStartTime())) {
-            intervalMap.put(task.getStartTime(), false);
-        } else {
-            while (!intervalMap.get(task.getStartTime())) {
-                task.setStartTime(task.getStartTime().plusMinutes(30));
-            }
-            intervalMap.put(task.getStartTime(), false);
-        }
-    }
-
-    private void clearIntervalValueMap() {
         for (Task task : tasks.values()) {
-            intervalMap.put(task.getStartTime(), true);
+            if (task.getStartTime() == null) {
+                prioritizedTasksWithNullStartDateElements.add(task);
+            }
         }
+
         for (Subtask subtask : subtasks.values()) {
-            intervalMap.put(subtask.getStartTime(), true);
+            if (subtask.getStartTime() == null) {
+                prioritizedTasksWithNullStartDateElements.add(subtask);
+            }
         }
+
+        return prioritizedTasksWithNullStartDateElements;
     }
 
-    private void removeTaskFromIntervalMap(Task task) {
-        intervalMap.put(task.getStartTime(), true);
+    private void validateStartTime(Task task) {
+        try {
+            if (task.getStartTime() != null) {
+                for (Task prioritizedTask : prioritizedTasks) {
+                    if (task.getStartTime().isEqual(prioritizedTask.getStartTime())) {
+                        throw new AddTaskException("Дата старта задачи " + task.getId() + " пересекается с другими задачами.");
+                    }
+                }
+                prioritizedTasks.add(task);
+            }
+        } catch (AddTaskException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     @Override

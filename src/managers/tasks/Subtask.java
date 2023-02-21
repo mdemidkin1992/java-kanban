@@ -2,13 +2,14 @@ package managers.tasks;
 
 import managers.enums.TaskStatus;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Subtask extends Task {
     private int epicId;
 
-    public Subtask(String name, String description, TaskStatus status, int epicId) {
-        super(name, description, status);
+    public Subtask(String name, String description, TaskStatus status, int epicId, int durationMinutes, LocalDateTime startTime) {
+        super(name, description, status, durationMinutes, startTime);
         this.epicId = epicId;
     }
 
@@ -24,7 +25,7 @@ public class Subtask extends Task {
                 + status + ","
                 + description + ","
                 + epicId + ","
-                + durationMinutes + " минут,"
-                + startTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy | HH:mm"));
+                + durationMinutes + ","
+                + startTime;
     }
 }

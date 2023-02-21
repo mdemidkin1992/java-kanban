@@ -8,7 +8,10 @@ import managers.tasks.Task;
 import managers.utilities.Managers;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,10 +24,11 @@ class InMemoryHistoryManagerTest {
 
     @Test
     public void shouldRemoveNodeHead() {
+
         TaskManager taskManager = Managers.getDefault();
-        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW);
-        final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW);
-        final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2);
+        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2, generateDurationMinutes(), generateStartTime());
 
         taskManager.addTask(task);
         taskManager.addEpic(epic);
@@ -44,9 +48,9 @@ class InMemoryHistoryManagerTest {
     @Test
     public void shouldRemoveNode() {
         TaskManager taskManager = Managers.getDefault();
-        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW);
-        final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW);
-        final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2);
+        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2, generateDurationMinutes(), generateStartTime());
 
         taskManager.addTask(task);
         taskManager.addEpic(epic);
@@ -66,9 +70,9 @@ class InMemoryHistoryManagerTest {
     @Test
     public void shouldRemoveNodeTail() {
         TaskManager taskManager = Managers.getDefault();
-        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW);
-        final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW);
-        final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2);
+        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2, generateDurationMinutes(), generateStartTime());
 
         taskManager.addTask(task);
         taskManager.addEpic(epic);
@@ -88,9 +92,9 @@ class InMemoryHistoryManagerTest {
     @Test
     public void shouldNotAddEqualTasksToHistory() {
         TaskManager taskManager = Managers.getDefault();
-        final Task task1 = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW);
-        final Task task2 = new Task("Test Task2 name", "Test Task2 description", TaskStatus.NEW);
-        final Task task3 = new Task("Test Task3 name", "Test Task3 description", TaskStatus.NEW);
+        final Task task1 = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Task task2 = new Task("Test Task2 name", "Test Task2 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Task task3 = new Task("Test Task3 name", "Test Task3 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
 
         taskManager.addTask(task1);
         taskManager.addTask(task2);
@@ -108,14 +112,30 @@ class InMemoryHistoryManagerTest {
     @Test
     public void shouldReturnEmptyHistory() {
         TaskManager taskManager = Managers.getDefault();
-        final Task task1 = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW);
-        final Task task2 = new Task("Test Task2 name", "Test Task2 description", TaskStatus.NEW);
-        final Task task3 = new Task("Test Task3 name", "Test Task3 description", TaskStatus.NEW);
+        final Task task1 = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Task task2 = new Task("Test Task2 name", "Test Task2 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Task task3 = new Task("Test Task3 name", "Test Task3 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
 
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.addTask(task3);
 
         assertEquals(0, taskManager.getHistory().size(), "История задач не пустая.");
+    }
+
+    private LocalDateTime generateStartTime() {
+        Random random = new Random();
+        return LocalDateTime.of(2023
+                , Month.FEBRUARY
+                , random.nextInt(28 - 20) + 20
+                , random.nextInt(18 - 9) + 9
+                , 0
+                , 0);
+    }
+
+    private int generateDurationMinutes() {
+        int[] possibleDuration = {30, 60, 90};
+        Random random = new Random();
+        return possibleDuration[(int) (random.nextDouble() * possibleDuration.length)];
     }
 }

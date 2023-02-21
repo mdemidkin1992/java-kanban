@@ -5,10 +5,8 @@ import managers.enums.TaskType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import java.util.Random;
 
 public class Task {
     protected String name;
@@ -19,19 +17,18 @@ public class Task {
     protected int durationMinutes;
     protected LocalDateTime startTime;
 
-    private static final Random rnd = new Random();
+    public Task(String name, String description, TaskStatus status, int durationMinutes, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.durationMinutes = durationMinutes;
+        this.startTime = startTime;
+    }
 
     public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
-        this.durationMinutes = 30;
-        this.startTime = LocalDateTime.of(2023                             // задачи на февраль 2023
-                , Month.FEBRUARY                                           // задачи на февраль 2023
-                , rnd.nextInt(27 - 20) + 20
-                , rnd.nextInt(18 - 9) + 9                           // задачи в рабочее время
-                , 0
-                , 0);
     }
 
     public void setId(Integer id) {
@@ -85,8 +82,8 @@ public class Task {
                 + name + ","
                 + status + ","
                 + description + ","
-                + durationMinutes + " минут,"
-                + startTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy | HH:mm"));
+                + durationMinutes + ","
+                + startTime;
     }
 
     @Override

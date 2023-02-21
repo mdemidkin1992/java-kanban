@@ -9,7 +9,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Collections;
+import java.util.Random;
 
 public class FileBackedTaskManagerTest extends TaskManagerTest {
     private static final File file = new File("testTaskManagerFile.csv");
@@ -21,9 +24,9 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {
     @Test
     public void shouldSaveAndLoadFromFile() {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW);
-        final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW);
-        final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2);
+        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2, generateDurationMinutes(), generateStartTime());
 
         fileBackedTaskManager.addTask(task);
         fileBackedTaskManager.addEpic(epic);
@@ -45,9 +48,9 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {
     @Test
     public void shouldNotThrowExceptionWhenLoadingFromFile() {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW);
-        final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW);
-        final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2);
+        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
+        final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2, generateDurationMinutes(), generateStartTime());
 
         fileBackedTaskManager.addTask(task);
         fileBackedTaskManager.addEpic(epic);
@@ -71,7 +74,23 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {
     @Test
     public void shouldNotThrowExceptionWhenSavingToFile() {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW);
+        final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         assertDoesNotThrow(() -> fileBackedTaskManager.addTask(task));
+    }
+
+    private LocalDateTime generateStartTime() {
+        Random random = new Random();
+        return LocalDateTime.of(2023
+                , Month.FEBRUARY
+                , random.nextInt(28 - 20) + 20
+                , random.nextInt(18 - 9) + 9
+                , 0
+                , 0);
+    }
+
+    private int generateDurationMinutes() {
+        int[] possibleDuration = {30, 60, 90};
+        Random random = new Random();
+        return possibleDuration[(int) (random.nextDouble() * possibleDuration.length)];
     }
 }

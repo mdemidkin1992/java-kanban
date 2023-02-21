@@ -3,7 +3,6 @@ package managers.tasks;
 import managers.enums.TaskStatus;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +10,8 @@ public class Epic extends Task {
     private List<Integer> subtaskIds = new ArrayList<>();
     private LocalDateTime endTime;
 
-    public Epic(String name, String description, TaskStatus status) {
-        super(name, description, status);
+    public Epic(String name, String description, TaskStatus status, int durationMinutes, LocalDateTime startTime) {
+        super(name, description, status, durationMinutes, startTime);
     }
 
     public void addSubtaskId(Integer subtaskId) {
@@ -27,8 +26,26 @@ public class Epic extends Task {
         return subtaskIds;
     }
 
-    public void setEpicEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+    public void setDurationMinutes(List<Integer> subtasksDurationMinutes) {
+        int epicDurationMinutes = 0;
+        if (subtasksDurationMinutes != null) {
+            for (int subtaskDurationMinutes : subtasksDurationMinutes) {
+                epicDurationMinutes += subtaskDurationMinutes;
+            }
+        }
+        this.durationMinutes = epicDurationMinutes;
+    }
+
+    public void setStartTime(List<LocalDateTime> subtasksStartTime) {
+        this.startTime = subtasksStartTime.stream()
+                .min(LocalDateTime::compareTo)
+                .orElse(null);
+    }
+
+    public void setEndTime(List<LocalDateTime> subtasksEndTime) {
+        this.endTime = subtasksEndTime.stream()
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
     }
 
     @Override
@@ -43,8 +60,8 @@ public class Epic extends Task {
                 + name + ","
                 + status + ","
                 + description + ","
-                + durationMinutes + " минут,"
-                + startTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy | HH:mm"));
+                + durationMinutes + ","
+                + startTime;
     }
 
 }

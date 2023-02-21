@@ -11,6 +11,8 @@ import managers.tasks.Epic;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -111,21 +113,34 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         TaskType taskType = TaskType.valueOf(parts[1]);
         switch (taskType) {
             case TASK: {
-                Task task = new Task(parts[2], parts[4], TaskStatus.valueOf(parts[3]));
+                Task task = new Task(parts[2]
+                        , parts[4]
+                        , TaskStatus.valueOf(parts[3])
+                        , Integer.parseInt(parts[5])
+                        , LocalDateTime.parse(parts[6]));
                 task.setTaskType(TaskType.TASK);
                 task.setId(Integer.parseInt(parts[0]));
                 tasks.put(task.getId(), task);
                 break;
             }
             case SUBTASK: {
-                Subtask subtask = new Subtask(parts[2], parts[4], TaskStatus.valueOf(parts[3]), Integer.parseInt(parts[5]));
+                Subtask subtask = new Subtask(parts[2]
+                        , parts[4]
+                        , TaskStatus.valueOf(parts[3])
+                        , Integer.parseInt(parts[5])
+                        , Integer.parseInt(parts[6])
+                        , LocalDateTime.parse(parts[7]));
                 subtask.setTaskType(TaskType.SUBTASK);
                 subtask.setId(Integer.parseInt(parts[0]));
                 subtasks.put(subtask.getId(), subtask);
                 break;
             }
             case EPIC: {
-                Epic epic = new Epic(parts[2], parts[4], TaskStatus.valueOf(parts[3]));
+                Epic epic = new Epic(parts[2]
+                        , parts[4]
+                        , TaskStatus.valueOf(parts[3])
+                        , Integer.parseInt(parts[5])
+                        , LocalDateTime.parse(parts[6]));
                 epic.setTaskType(TaskType.EPIC);
                 epic.setId(Integer.parseInt(parts[0]));
                 epics.put(epic.getId(), epic);
