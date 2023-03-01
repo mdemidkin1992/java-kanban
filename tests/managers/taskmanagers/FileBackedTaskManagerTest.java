@@ -18,12 +18,12 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {
     private static final File file = new File("testTaskManagerFile.csv");
 
     public TaskManager createTaskManager() {
-        return new FileBackedTaskManager(file);
+        return new FileBackedTaskManager(file.getName());
     }
 
     @Test
     public void shouldSaveAndLoadFromFile() {
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file.getName());
         final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2, generateDurationMinutes(), generateStartTime());
@@ -36,7 +36,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {
         fileBackedTaskManager.getAnyTask(subtask.getId());
         fileBackedTaskManager.getAnyTask(epic.getId());
 
-        FileBackedTaskManager newFileBackedTaskManager = new FileBackedTaskManager(file);
+        FileBackedTaskManager newFileBackedTaskManager = new FileBackedTaskManager(file.getName());
         newFileBackedTaskManager.loadFromFile(file);
 
         assertEquals(fileBackedTaskManager.getAllTasks(), newFileBackedTaskManager.getAllTasks(), "Списки не совпадают.");
@@ -47,7 +47,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {
 
     @Test
     public void shouldNotThrowExceptionWhenLoadingFromFile() {
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file.getName());
         final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         final Subtask subtask = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 2, generateDurationMinutes(), generateStartTime());
@@ -62,7 +62,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {
 
         file.delete();
 
-        FileBackedTaskManager newFileBackedTaskManager = new FileBackedTaskManager(file);
+        FileBackedTaskManager newFileBackedTaskManager = new FileBackedTaskManager(file.getName());
 
         assertDoesNotThrow(() -> newFileBackedTaskManager.loadFromFile(file));
         assertEquals(Collections.emptyList(), newFileBackedTaskManager.getHistory());
@@ -73,7 +73,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest {
 
     @Test
     public void shouldNotThrowExceptionWhenSavingToFile() {
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file.getName());
         final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         assertDoesNotThrow(() -> fileBackedTaskManager.addTask(task));
     }

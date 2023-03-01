@@ -6,6 +6,7 @@ import managers.utilities.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
@@ -67,10 +68,7 @@ class EpicTest {
     }
 
     @Test
-    public void shouldGetEndTime() {
-//        int duration = 30;
-//        LocalDateTime startTime = LocalDateTime.of(2023, Month.FEBRUARY, 20, 9, 0);
-//        epic.setEndTime(startTime.plusMinutes(duration));
+    public void shouldGetEndTime() throws IOException, InterruptedException {
         TaskManager taskManager = Managers.getDefault();
         taskManager.addEpic(epic);
         Subtask subtask1 = new Subtask("Подзадача 1", "Подзадача 1", TaskStatus.NEW, 1, 30, LocalDateTime.of(2023,Month.FEBRUARY, 8,9,0));

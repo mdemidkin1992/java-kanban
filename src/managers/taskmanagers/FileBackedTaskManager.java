@@ -4,26 +4,31 @@ import managers.enums.TaskStatus;
 import managers.enums.TaskType;
 import managers.exceptions.ManagerSaveException;
 import managers.historymanagers.HistoryManager;
-import managers.tasks.Task;
-import managers.tasks.Subtask;
 import managers.tasks.Epic;
+import managers.tasks.Subtask;
+import managers.tasks.Task;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final File file;
+    private final String fileName;
 
-    public FileBackedTaskManager(File file) {
-        this.file = file;
+    public FileBackedTaskManager(String fileName) {
+        this.fileName = fileName;
     }
 
-    private void save() {
-        try (PrintWriter printWriter = new PrintWriter(new FileWriter(file.getName()))) {
+    protected void save() {
+        try (PrintWriter printWriter = new PrintWriter(new FileWriter(fileName))) {
             printWriter.print("id,type,name,status,description,epic,duration,startTime");
             for (Task task : tasks.values()) {
                 printWriter.print(task.toString());
@@ -227,9 +232,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void deleteAnyTask(int anyTaskId) {
+    public Task deleteAnyTask(int anyTaskId) {
         super.deleteAnyTask(anyTaskId);
         save();
+        return null;
     }
 
     @Override
@@ -238,4 +244,5 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
         return task;
     }
+
 }

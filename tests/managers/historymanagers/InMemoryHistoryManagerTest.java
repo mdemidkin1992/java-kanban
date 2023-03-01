@@ -8,6 +8,7 @@ import managers.tasks.Task;
 import managers.utilities.Managers;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemoryHistoryManagerTest {
 
     @Test
-    public void shouldRemoveNodeHead() {
+    public void shouldRemoveNodeHead() throws IOException, InterruptedException {
 
         TaskManager taskManager = Managers.getDefault();
         final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
@@ -46,7 +47,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldRemoveNode() {
+    public void shouldRemoveNode() throws IOException, InterruptedException {
         TaskManager taskManager = Managers.getDefault();
         final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
@@ -68,7 +69,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldRemoveNodeTail() {
+    public void shouldRemoveNodeTail() throws IOException, InterruptedException {
         TaskManager taskManager = Managers.getDefault();
         final Task task = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         final Epic epic = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
@@ -90,7 +91,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldNotAddEqualTasksToHistory() {
+    public void shouldNotAddEqualTasksToHistory() throws IOException, InterruptedException {
         TaskManager taskManager = Managers.getDefault();
         final Task task1 = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         final Task task2 = new Task("Test Task2 name", "Test Task2 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
@@ -110,7 +111,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldReturnEmptyHistory() {
+    public void shouldReturnEmptyHistory() throws IOException, InterruptedException {
         TaskManager taskManager = Managers.getDefault();
         final Task task1 = new Task("Test Task1 name", "Test Task1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         final Task task2 = new Task("Test Task2 name", "Test Task2 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());

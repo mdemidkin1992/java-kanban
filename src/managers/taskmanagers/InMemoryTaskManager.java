@@ -4,7 +4,9 @@ import managers.enums.TaskStatus;
 import managers.enums.TaskType;
 import managers.exceptions.AddTaskException;
 import managers.historymanagers.HistoryManager;
-import managers.tasks.*;
+import managers.tasks.Epic;
+import managers.tasks.Subtask;
+import managers.tasks.Task;
 import managers.utilities.Managers;
 
 import java.time.LocalDateTime;
@@ -124,7 +126,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAnyTask(int anyTaskId) {
+    public Task deleteAnyTask(int anyTaskId) {
         historyManager.remove(anyTaskId);
         if (tasks.containsKey(anyTaskId)) {
             tasks.remove(anyTaskId);
@@ -147,6 +149,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             System.out.println("Такой задачи пока нет");
         }
+        return null;
     }
 
     @Override

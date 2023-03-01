@@ -8,6 +8,7 @@ import managers.utilities.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
@@ -407,7 +408,7 @@ public abstract class TaskManagerTest {
     }
 
     @Test
-    public void shouldSetEpicStartTimeToMinOfSubtasksStartTimes() {
+    public void shouldSetEpicStartTimeToMinOfSubtasksStartTimes() throws IOException, InterruptedException {
         TaskManager newTaskManager = Managers.getDefault();
         Epic epic1 = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         Subtask subtask1 = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 1, generateDurationMinutes(), generateStartTime());
@@ -428,7 +429,7 @@ public abstract class TaskManagerTest {
     }
 
     @Test
-    public void shouldSetEpicEndTimeToMaxOfSubtasksEndTime() {
+    public void shouldSetEpicEndTimeToMaxOfSubtasksEndTime() throws IOException, InterruptedException {
         TaskManager newTaskManager = Managers.getDefault();
         Epic epic1 = new Epic("Test Epic1 name", "Test Epic1 description", TaskStatus.NEW, generateDurationMinutes(), generateStartTime());
         Subtask subtask1 = new Subtask("Test Subtask1 name", "Test Subtask1 description", TaskStatus.NEW, 1, generateDurationMinutes(), generateStartTime());
