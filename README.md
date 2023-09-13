@@ -1,36 +1,38 @@
-## Трекер задач (java-kanban)
-Бэкенд по формированию модели данных трекера задач / канбан доски.
+## Task Tracker (java-kanban)
+Backend for creating the data model of a task tracker/kanban board.
 
-#### Основной функционал и классы
+#### Main Functionality and Classes
 
-Родительский класс ```Task```, описывающий задачу. 
-От ```Task``` наследуются классы ```Subtask``` и ```Epic```. 
-Крупные задачи (эпики) состоят из подзадач. 
+The parent class ```Task``` describes a task.
+The classes ```Subtask``` and ```Epic``` inherit from Task.
+Large tasks (epics) consist of subtasks.
+
 ___
 
-Интерфейс ```TaskManager```:
-- Создание / обновление / удаление задач
-- Получение задач по идентификатору и списка задач
-- Получение списка подзадач эпика
-- Вывод списка приоритетных задач (с сортировкой по дате начала)
+Interface ```TaskManager```:
+- Create/update/delete tasks
+- Retrieve tasks by identifier and lists of tasks
+- Get a list of subtasks for an epic
+- Display a list of priority tasks (sorted by start date)
 
-Реализован функционал для хранения данных пользователей разными способами:
-- Хранение в памяти приложения ```InMemoryTaskManager``` (используются структуры данных ```HashMap``` и ```TreeSet```)
-- Запись информации и чтение из файла на жестком диске при старте приложения ```FileBackedTaskManager```
-- Сохранение данных на Key-Value сервер через Http-клиента ```HttpTaskManager```
+Functionality has been implemented to store user data in various ways:
+- In-memory storage ```InMemoryTaskManager``` (using data structures ```HashMap``` and ```TreeSet```)
+- Writing and reading information from a file on the hard disk at application startup ```FileBackedTaskManager```
+- Saving data to a Key-Value server via an HTTP client ```HttpTaskManager```
 ___
 
-Интерфейс ```HistoryManager```:
-- Добавление задачи в историю просмотров 
-- Получение истории просмотров задач
+Interface ```HistoryManager```:
+- Add a task to the viewing history
+- Retrieve the viewing history of tasks
 
-Хранение истории реализовано двух сценариях:
-- Хранение в оперативной памяти приложения (```InMemoryHistoryManager```)
-- Сохранение на Key-Value сервер через Http-клиента
-___
+History storage is implemented in two scenarios:
+- In-memory storage (```InMemoryHistoryManager```)
+- Saving to a Key-Value server via an HTTP client
 
-#### Тестовое покрытие
-Использована библиотека JUnit для написана юнит-тестов. 
 ___
-#### Системные требования
-- Java Development Kit (JDK) 11
+#### Test Coverage
+The JUnit library has been used to write unit tests.
+
+___
+#### System Requirements
+Java Development Kit (JDK) 11
