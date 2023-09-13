@@ -2,10 +2,9 @@
 Backend for creating the data model of a task tracker/kanban board.
 
 #### Main Functionality and Classes
-
-The parent class ```Task``` describes a task.
-The classes ```Subtask``` and ```Epic``` inherit from Task.
-Large tasks (epics) consist of subtasks.
+- The parent class ```Task``` describes a task.
+- The classes ```Subtask``` and ```Epic``` inherit from Task.
+- Large tasks (epics) consist of subtasks.
 
 ___
 
